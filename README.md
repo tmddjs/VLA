@@ -10,6 +10,10 @@ positions to estimate per-cell light levels.
    ```bash
    pip install -r requirements.txt
    ```
+   Ensure the `NanumGothic` font is available. On Ubuntu:
+   ```bash
+   sudo apt-get install fonts-nanum
+   ```
 
 2. Prepare `plants.csv` with columns:
    `scientific_name,kr_name,life_form,max_height_m,root_depth_cm_range,light_requirement_1_5,lifespan_yr`

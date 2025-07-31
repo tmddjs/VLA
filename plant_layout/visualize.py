@@ -1,6 +1,10 @@
 from typing import List
 import matplotlib.pyplot as plt
+from matplotlib import rcParams
 import numpy as np
+
+# Ensure Korean labels are rendered correctly
+rcParams['font.family'] = 'NanumGothic'
 
 from .layout import PlantLayout
 from .grid import Grid
