@@ -31,6 +31,16 @@ positions to estimate per-cell light levels.
    ```
    The script will produce `placement.json` and `layout.png` in the output folder.
 
+## Environment Variables
+
+The server uses the `PYTHON` environment variable to determine which Python
+interpreter to run. Set it to the path of your preferred Python executable. If
+unset, it defaults to `python3`.
+
+```bash
+export PYTHON=/usr/bin/python3.11
+```
+
 ## License
 
 MIT
