@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Dict, Sequence
+from typing import List, Dict, Sequence, Any
 import csv
 
 @dataclass
@@ -25,10 +25,10 @@ FIELD_ALIASES: Dict[str, Sequence[str]] = {
 }
 
 
-def _get(row: Dict[str, str], keys: Sequence[str], default: str = "") -> str:
+def _get(row: Dict[str, Any], keys: Sequence[str], default: str = "") -> str:
     for k in keys:
-        if k in row and row[k] != "":
-            return row[k]
+        if k in row and row[k] not in ("", None):
+            return str(row[k])
     return default
 
 
@@ -56,4 +56,29 @@ def load_plants(path: str) -> List[Plant]:
                     lifespan=int(_get(row, FIELD_ALIASES["lifespan_yr"], "0")),
                 )
             )
+    return plants
+
+
+def load_plants_json(obj: List[Dict[str, Any]]) -> List[Plant]:
+    plants: List[Plant] = []
+    for row in obj:
+        depth_raw = _get(row, FIELD_ALIASES["root_depth_cm_range"])
+        depth_range = depth_raw.replace(" ", "").split("-") if depth_raw else ["0"]
+        if len(depth_range) == 2:
+            depth_min, depth_max = map(float, depth_range)
+        else:
+            depth_min = depth_max = float(depth_range[0])
+
+        plants.append(
+            Plant(
+                scientific_name=_get(row, FIELD_ALIASES["scientific_name"]),
+                kr_name=_get(row, FIELD_ALIASES["kr_name"]),
+                life_form=_get(row, FIELD_ALIASES["life_form"]),
+                max_height=float(_get(row, FIELD_ALIASES["max_height_m"], "0")),
+                root_depth_min=depth_min,
+                root_depth_max=depth_max,
+                light_requirement=int(_get(row, FIELD_ALIASES["light_requirement_1_5"], "3")),
+                lifespan=int(_get(row, FIELD_ALIASES["lifespan_yr"], "0")),
+            )
+        )
     return plants

@@ -2,20 +2,35 @@ import argparse
 import json
 from pathlib import Path
 
-from .layout import generate_layout
+from .data import load_plants_json
+from .layout import generate_layout, PlantLayout
+from .grid import Grid
+from .sunlight import default_sun_positions
 from .visualize import plot_layout
 
 
 def main():
     parser = argparse.ArgumentParser(description="Shadow-aware plant layout generator")
-    parser.add_argument("csv", help="Path to plants.csv")
     parser.add_argument("width", type=float, help="Width of area in meters")
     parser.add_argument("height", type=float, help="Height of area in meters")
+    parser.add_argument("csv", nargs="?", help="Path to plants.csv")
+    parser.add_argument("--json", help="JSON string with plant data")
     parser.add_argument("--cell", type=float, default=0.5, help="Grid cell size in meters")
     parser.add_argument("--out", default="output", help="Output directory")
     args = parser.parse_args()
 
-    layout = generate_layout(args.csv, args.width, args.height, args.cell)
+    if args.json:
+        plant_obj = json.loads(args.json)
+        plants = load_plants_json(plant_obj)
+        sun_positions = default_sun_positions()
+        grid = Grid(args.width, args.height, args.cell)
+        grid.initialize_exposures(len(sun_positions))
+        layout = PlantLayout(grid, sun_positions)
+        layout.place_plants(plants)
+    else:
+        if not args.csv:
+            parser.error("CSV path or --json must be provided")
+        layout = generate_layout(args.csv, args.width, args.height, args.cell)
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)

@@ -21,9 +21,13 @@ positions to estimate per-cell light levels.
 
    A sample dataset is provided in `sample_plants.csv`.
 
-3. Run the generator:
+3. Run the generator with a CSV file:
    ```bash
-   python -m plant_layout.main plants.csv WIDTH HEIGHT --cell 0.5 --out output
+   python -m plant_layout.main WIDTH HEIGHT plants.csv --cell 0.5 --out output
+   ```
+   To supply plant data directly as JSON:
+   ```bash
+   python -m plant_layout.main WIDTH HEIGHT --json '[{"scientific_name": "Quercus", "kr_name": "참나무"}]' --cell 0.5 --out output
    ```
    The script will produce `placement.json` and `layout.png` in the output folder.
 
