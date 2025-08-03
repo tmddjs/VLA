@@ -31,15 +31,30 @@ positions to estimate per-cell light levels.
    ```
    The script will produce `placement.json` and `layout.png` in the output folder.
 
-## Environment Variables
+## API
 
-The server uses the `PYTHON` environment variable to determine which Python
-interpreter to run. Set it to the path of your preferred Python executable. If
-unset, it defaults to `python3`.
+A small FastAPI application exposes the layout generator over HTTP.
 
-```bash
-export PYTHON=/usr/bin/python3.11
-```
+1. Install the dependencies and start the server:
+   ```bash
+   pip install -r requirements.txt
+   uvicorn api:app --reload
+   ```
+
+2. Send a `POST` request to `/run-layout` with JSON containing the target area
+   dimensions and an array of plant descriptions. Example:
+
+   ```json
+   {
+     "width": 5,
+     "height": 5,
+     "plants": [{"scientific_name": "Quercus", "kr_name": "\ucc3d\ub098\ubb34"}]
+   }
+   ```
+
+   On success the response body contains the list of placements and a base64
+   encoded PNG image of the layout. If an error occurs, the server responds with
+   HTTP 400 and a descriptive message.
 
 ## License
 
