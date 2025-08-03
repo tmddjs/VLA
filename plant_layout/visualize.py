@@ -1,4 +1,4 @@
-from typing import List
+from typing import BinaryIO, List, Union
 import matplotlib.pyplot as plt
 from matplotlib import rcParams
 import numpy as np
@@ -10,7 +10,7 @@ from .layout import PlantLayout
 from .grid import Grid
 
 
-def plot_layout(layout: PlantLayout, image_path: str):
+def plot_layout(layout: PlantLayout, image_path: Union[str, BinaryIO]):
     grid = layout.grid
     exposures = grid.exposures
     fig, ax = plt.subplots(figsize=(8, 8))
@@ -24,5 +24,7 @@ def plot_layout(layout: PlantLayout, image_path: str):
     ax.set_ylabel('m')
     fig.colorbar(im, ax=ax, label='Light level')
     plt.tight_layout()
-    plt.savefig(image_path)
+    # ``image_path`` may be a filesystem path or a file-like object.  Explicitly
+    # specify the format so in-memory buffers are handled correctly.
+    plt.savefig(image_path, format="png")
     plt.close(fig)
