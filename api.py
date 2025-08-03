@@ -15,6 +15,7 @@ class LayoutRequest(BaseModel):
     width: float
     height: float
     plants: List[Dict[str, Any]]
+    return_image: bool = True
 
 
 class LayoutResponse(BaseModel):
@@ -36,7 +37,7 @@ def run_layout_endpoint(req: LayoutRequest) -> LayoutResponse:
 
     try:
         placements, image_b64 = run_layout(
-            req.width, req.height, req.plants, return_image=True
+            req.width, req.height, req.plants, return_image=req.return_image
         )
     except Exception as exc:  # pragma: no cover - defensive error handling
         raise HTTPException(status_code=400, detail=str(exc)) from exc

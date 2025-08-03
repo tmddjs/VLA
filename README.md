@@ -19,7 +19,7 @@ positions to estimate per-cell light levels.
    `scientific_name,kr_name,life_form,max_height_m,root_depth_cm_range,light_requirement_1_5,lifespan_yr`
    (Korean headers such as `학명,국명,...` are also accepted.)
 
-   A sample dataset is provided in `sample_plants.csv`.
+   A sample dataset is provided in `plants.csv`.
 
 3. Run the generator with a CSV file:
    ```bash
@@ -42,19 +42,21 @@ A small FastAPI application exposes the layout generator over HTTP.
    ```
 
 2. Send a `POST` request to `/run-layout` with JSON containing the target area
-   dimensions and an array of plant descriptions. Example:
+   dimensions, an array of plant descriptions and optionally ``return_image``
+   to disable the PNG response. Example:
 
    ```json
    {
      "width": 5,
      "height": 5,
-     "plants": [{"scientific_name": "Quercus", "kr_name": "\ucc3d\ub098\ubb34"}]
+     "plants": [{"scientific_name": "Quercus", "kr_name": "\ucc3d\ub098\ubb34"}],
+     "return_image": true
    }
    ```
 
-   On success the response body contains the list of placements and a base64
-   encoded PNG image of the layout. If an error occurs, the server responds with
-   HTTP 400 and a descriptive message.
+   On success the response body contains the list of placements and, when
+   requested, a base64 encoded PNG image of the layout. If an error occurs, the
+   server responds with HTTP 400 and a descriptive message.
 
 ## License
 
