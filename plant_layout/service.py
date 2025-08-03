@@ -69,6 +69,3 @@ def run_layout(
         image_b64 = base64.b64encode(buf.read()).decode("ascii")
 
     return layout.to_dict(), image_b64
-
-
-__all__ = ["run_layout"]
