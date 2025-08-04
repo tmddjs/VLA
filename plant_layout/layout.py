@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 from .data import Plant, load_plants
 from .grid import Grid
-from .sunlight import SunPosition, default_sun_positions
+from .sunlight import SunPosition, default_sun_positions, sun_vector
 from .shadow import shadow_cells
 
 
@@ -11,12 +11,13 @@ class PlantLayout:
     def __init__(self, grid: Grid, sun_positions: List[SunPosition]):
         self.grid = grid
         self.sun_positions = sun_positions
+        # Precompute sun vectors for shadow calculations
+        self.sun_vectors = [sun_vector(s) for s in sun_positions]
         self.placements: List[Tuple[Plant, float, float]] = []
 
     def update_shadow(self, x: float, y: float, height: float):
-        for sun in self.sun_positions:
-            cells = shadow_cells(self.grid, x, y, height, sun)
-            self.grid.mark_shadow(cells)
+        cells = shadow_cells(self.grid, x, y, height, self.sun_vectors)
+        self.grid.mark_shadow(cells)
 
     def can_place(self, plant: Plant, row: int, col: int) -> bool:
         if self.grid.occupied[row, col]:
