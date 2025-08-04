@@ -21,38 +21,37 @@ def sun_positions(latitude: float, samples_per_day: int = 16) -> List[SunPositio
         is below the horizon are discarded.
     """
 
-    def _solar_position(lat_deg: float, day_of_year: int, hour: float) -> Tuple[float, float]:
-        """Compute solar elevation and azimuth for given inputs."""
-        lat = math.radians(lat_deg)
-        # Approximate solar declination angle (in radians)
-        decl = math.radians(23.44) * math.sin(math.radians(360 / 365 * (day_of_year - 81)))
-        # Hour angle (in radians), assuming local solar time
-        hour_angle = math.radians(15 * (hour - 12))
-
+    def _solar_position(lat_rad: float, decl: float, hour_angle: float) -> Tuple[float, float]:
+        """Compute solar elevation and azimuth from latitude, declination and hour angle."""
         sin_elev = (
-            math.sin(lat) * math.sin(decl)
-            + math.cos(lat) * math.cos(decl) * math.cos(hour_angle)
+            math.sin(lat_rad) * math.sin(decl)
+            + math.cos(lat_rad) * math.cos(decl) * math.cos(hour_angle)
         )
         elev = math.asin(sin_elev)
 
+        sin_az = math.sin(hour_angle) * math.cos(decl) / math.cos(elev)
         cos_az = (
-            math.sin(decl) - math.sin(elev) * math.sin(lat)
-        ) / (math.cos(elev) * math.cos(lat))
-        cos_az = max(-1.0, min(1.0, cos_az))  # guard against floating errors
-        az = math.acos(cos_az)
-        if math.sin(hour_angle) > 0:
-            az = 2 * math.pi - az
+            math.sin(decl) - math.sin(elev) * math.sin(lat_rad)
+        ) / (math.cos(elev) * math.cos(lat_rad))
+        az = math.atan2(sin_az, cos_az)
         return math.degrees(elev), (math.degrees(az) % 360)
 
     # Day-of-year values for equinoxes and solstices
     season_days = [80, 172, 266, 355]
+    lat_rad = math.radians(latitude)
     positions: List[SunPosition] = []
-    step = 24 / samples_per_day
     for day in season_days:
+        decl = math.radians(23.44) * math.sin(math.radians(360 / 365 * (day - 81)))
+        # sunset hour angle
+        try:
+            omega_s = math.acos(-math.tan(lat_rad) * math.tan(decl))
+        except ValueError:
+            # polar day/night guard
+            omega_s = math.pi
         for i in range(samples_per_day):
-            hour = i * step
-            elev, az = _solar_position(latitude, day, hour)
-            if elev >= 0:  # filter positions below the horizon
+            ha = -omega_s + (2 * omega_s) * i / (samples_per_day - 1)
+            elev, az = _solar_position(lat_rad, decl, ha)
+            if elev >= 0:
                 positions.append(SunPosition(elevation=elev, azimuth=az))
     return positions
 

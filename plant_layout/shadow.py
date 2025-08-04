@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Optional
 import math
 
 from .grid import Grid
@@ -27,13 +27,18 @@ def compute_shadow_paths(
             paths.append([])
             continue
 
-        length = height / dz
+        max_dist = math.hypot(grid.width, grid.height)
+        length = min(height / dz, max_dist)
         dist = step
         cells: List[Tuple[int, int]] = []
+        prev: Optional[Tuple[int, int]] = None
         while dist <= length:
             dr = math.floor(0.5 + (dy * dist) / grid.cell_size)
             dc = math.floor(0.5 + (dx * dist) / grid.cell_size)
-            cells.append((dr, dc))
+            cell = (dr, dc)
+            if cell != prev:
+                cells.append(cell)
+                prev = cell
             dist += step
         paths.append(cells)
 
