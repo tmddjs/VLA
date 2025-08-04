@@ -27,9 +27,23 @@ positions to estimate per-cell light levels.
    ```
    To supply plant data directly as JSON:
    ```bash
-   python -m plant_layout.main WIDTH HEIGHT --json '[{"scientific_name": "Quercus", "kr_name": "참나무"}]' --cell 0.5 --out output
-   ```
-   The script will produce `placement.json` and `layout.png` in the output folder.
+    python -m plant_layout.main WIDTH HEIGHT --json '[{"scientific_name": "Quercus", "kr_name": "참나무"}]' --cell 0.5 --out output
+    ```
+    The script will produce `placement.json` and `layout.png` in the output folder.
+
+### Building a Binary
+
+You can bundle `test.py` into a standalone executable manually with:
+
+```bash
+pyinstaller --onefile test.py
+```
+
+Alternatively, use the helper script:
+
+```bash
+./scripts/build_binary.sh
+```
 
 ## Environment Variables
 
