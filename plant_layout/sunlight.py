@@ -6,6 +6,7 @@ from typing import List, Tuple
 class SunPosition:
     elevation: float  # degrees above horizon
     azimuth: float    # degrees from north clockwise
+    weight: float = 1.0  # relative light intensity (0-1)
 
 
 def sun_positions(latitude: float, samples_per_day: int = 24) -> List[SunPosition]:
@@ -52,7 +53,12 @@ def sun_positions(latitude: float, samples_per_day: int = 24) -> List[SunPositio
             ha = -omega_s + (2 * omega_s) * i / (samples_per_day - 1)
             elev, az = _solar_position(lat_rad, decl, ha)
             if elev >= 0:
-                positions.append(SunPosition(elevation=elev, azimuth=az))
+
+                # weight sunlight intensity by elevation; near-horizon sun adds less
+                weight = max(0.0, math.sin(math.radians(elev)))
+                positions.append(
+                    SunPosition(elevation=elev, azimuth=az, weight=weight)
+                )
     return positions
 
 

@@ -52,15 +52,15 @@ def shadow_cells(
     y: float,
     height: float,
     sun_vectors: List[Tuple[float, float, float]],
-) -> List[Tuple[int, int]]:
-    """Return cells shadowed by a plant at ``x, y`` with ``height``.
+) -> List[List[Tuple[int, int]]]:
+    """Return cells shadowed by each sun vector for a plant at ``x, y``.
 
     Precomputed paths for the given ``height`` are reused for efficiency.
     """
 
     paths = compute_shadow_paths(grid, height, sun_vectors)
     base_row, base_col = grid.cell_indices(x, y)
-    cells: List[Tuple[int, int]] = []
+    result: List[List[Tuple[int, int]]] = []
     for path in paths:
-        cells.extend((base_row + r, base_col + c) for r, c in path)
-    return cells
+        result.append([(base_row + r, base_col + c) for r, c in path])
+    return result
