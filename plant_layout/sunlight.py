@@ -8,7 +8,7 @@ class SunPosition:
     azimuth: float    # degrees from north clockwise
 
 
-def sun_positions(latitude: float, samples_per_day: int = 16) -> List[SunPosition]:
+def sun_positions(latitude: float, samples_per_day: int = 24) -> List[SunPosition]:
     """Calculate seasonal sun positions for a given latitude.
 
     Args:
@@ -56,7 +56,7 @@ def sun_positions(latitude: float, samples_per_day: int = 16) -> List[SunPositio
     return positions
 
 
-def default_sun_positions(samples_per_day: int = 16) -> List[SunPosition]:
+def default_sun_positions(samples_per_day: int = 24) -> List[SunPosition]:
     """Sun positions for South Korea with a default sample count."""
     KOREA_LATITUDE = 37.5665  # Approximate latitude of Seoul, South Korea
     return sun_positions(KOREA_LATITUDE, samples_per_day)
