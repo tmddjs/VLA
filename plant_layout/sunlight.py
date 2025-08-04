@@ -53,9 +53,11 @@ def sun_positions(latitude: float, samples_per_day: int = 24) -> List[SunPositio
             ha = -omega_s + (2 * omega_s) * i / (samples_per_day - 1)
             elev, az = _solar_position(lat_rad, decl, ha)
             if elev >= 0:
-                # weight intensity by elevation angle so low sun contributes less
-                weight = math.sin(math.radians(elev))
-                positions.append(SunPosition(elevation=elev, azimuth=az, weight=weight))
+                # weight sunlight intensity by elevation; near-horizon sun adds less
+                weight = max(0.0, math.sin(math.radians(elev)))
+                positions.append(
+                    SunPosition(elevation=elev, azimuth=az, weight=weight)
+                )
     return positions
 
 
