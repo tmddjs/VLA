@@ -24,7 +24,8 @@ def main():
         plants = load_plants_json(plant_obj)
         sun_positions = default_sun_positions()
         grid = Grid(args.width, args.height, args.cell)
-        grid.initialize_exposures(len(sun_positions))
+        total_weight = sum(p.weight for p in sun_positions)
+        grid.initialize_exposures(total_weight)
         layout = PlantLayout(grid, sun_positions)
         layout.place_plants(plants)
     else:

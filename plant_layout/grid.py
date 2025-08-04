@@ -14,8 +14,8 @@ class Grid:
         self.exposures = None  # will be numpy array rows x cols
         self.occupied = np.zeros((self.rows, self.cols), dtype=bool)
 
-    def initialize_exposures(self, total_sun_positions: int):
-        self.exposures = np.full((self.rows, self.cols), total_sun_positions, dtype=int)
+    def initialize_exposures(self, total_exposure: float):
+        self.exposures = np.full((self.rows, self.cols), total_exposure, dtype=float)
 
     def cell_center(self, row: int, col: int) -> Tuple[float, float]:
         x = (col + 0.5) * self.cell_size
@@ -27,9 +27,9 @@ class Grid:
         row = int(y / self.cell_size)
         return row, col
 
-    def mark_shadow(self, cells: List[Tuple[int, int]]):
+    def mark_shadow(self, cells: List[Tuple[int, int]], weight: float):
         for r, c in cells:
             if 0 <= r < self.rows and 0 <= c < self.cols:
-                self.exposures[r, c] -= 1
+                self.exposures[r, c] -= weight
                 if self.exposures[r, c] < 0:
-                    self.exposures[r, c] = 0
+                    self.exposures[r, c] = 0.0

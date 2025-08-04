@@ -11,13 +11,15 @@ class PlantLayout:
     def __init__(self, grid: Grid, sun_positions: List[SunPosition]):
         self.grid = grid
         self.sun_positions = sun_positions
-        # Precompute sun vectors for shadow calculations
+        # Precompute sun vectors and weights for shadow calculations
         self.sun_vectors = [sun_vector(s) for s in sun_positions]
+        self.sun_weights = [s.weight for s in sun_positions]
         self.placements: List[Tuple[Plant, float, float]] = []
 
     def update_shadow(self, x: float, y: float, height: float):
-        cells = shadow_cells(self.grid, x, y, height, self.sun_vectors)
-        self.grid.mark_shadow(cells)
+        paths = shadow_cells(self.grid, x, y, height, self.sun_vectors)
+        for path, weight in zip(paths, self.sun_weights):
+            self.grid.mark_shadow(path, weight)
 
     def can_place(self, plant: Plant, row: int, col: int) -> bool:
         if self.grid.occupied[row, col]:
@@ -55,7 +57,8 @@ class PlantLayout:
 def generate_layout(csv_path: str, width: float, height: float, cell_size: float):
     sun_positions = default_sun_positions()
     grid = Grid(width, height, cell_size)
-    grid.initialize_exposures(len(sun_positions))
+    total_weight = sum(p.weight for p in sun_positions)
+    grid.initialize_exposures(total_weight)
     plants = load_plants(csv_path)
     layout = PlantLayout(grid, sun_positions)
     layout.place_plants(plants)
