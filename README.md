@@ -41,6 +41,16 @@ unset, it defaults to `python3`.
 export PYTHON=/usr/bin/python3.11
 ```
 
+## Building a Standalone Binary
+
+To bundle a Python script into a single executable with [PyInstaller](https://pyinstaller.org/):
+
+```bash
+pip install pyinstaller
+pyinstaller --onefile test.py
+./dist/test
+```
+
 ## License
 
 MIT
