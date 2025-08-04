@@ -6,7 +6,7 @@ from typing import List, Tuple
 class SunPosition:
     elevation: float  # degrees above horizon
     azimuth: float    # degrees from north clockwise
-    weight: float     # relative light intensity (0-1)
+    weight: float = 1.0  # relative light intensity (0-1)
 
 
 def sun_positions(latitude: float, samples_per_day: int = 24) -> List[SunPosition]:
