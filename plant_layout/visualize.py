@@ -17,7 +17,7 @@ def plot_layout(layout: PlantLayout, image_path: str):
     im = ax.imshow(exposures, origin='lower', cmap='YlOrRd', extent=[0, grid.width, 0, grid.height])
     for plant, x, y in layout.placements:
         ax.plot(x, y, 'go')
-        ax.text(x, y, plant.kr_name or plant.scientific_name, fontsize=6)
+        ax.text(x, y, plant.kr_name or plant.scientific_name, fontsize=20)
     ax.set_xlim(0, grid.width)
     ax.set_ylim(0, grid.height)
     ax.set_xlabel('m')
