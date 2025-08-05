@@ -65,6 +65,16 @@ pyinstaller --onefile test.py
 ./dist/test
 ```
 
+## Environment Variables
+
+The server uses the `PYTHON` environment variable to determine which Python
+interpreter to run. Set it to the path of your preferred Python executable. If
+unset, it defaults to `python3`.
+
+```bash
+export PYTHON=/usr/bin/python3.11
+```
+
 ## License
 
 MIT
